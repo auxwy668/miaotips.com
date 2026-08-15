@@ -4,201 +4,188 @@ import { siteConfig } from '@/data/siteConfig';
 import { getCollection } from 'astro:content';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
-const sorted = articles
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 9);
-
-const c = siteConfig.colors;
-
-// Dynamic category tag styles
-const tagCSS = siteConfig.categories.map((cat, i) => {
-  const p = siteConfig.catTagPalette[i % siteConfig.catTagPalette.length];
-  return `.art-tag.${cat.id}{background:${p.bg};color:${p.color}}`;
-}).join('');
-
-const pageCSS = `
-.tl-main{position:relative;padding-bottom:60px}
-.tl-main .tl-news-float{position:absolute;top:80px;right:50px;border-left:5px solid ${c.primary};padding:20px}
-.news-float-title{font-weight:700;margin-bottom:10px}
-.news_1,.news_2,.news_3{font-size:13px;color:${c.textSecondary};line-height:1.8}
-
-.logo-container{text-align:center;overflow:hidden}
-.logo-zone{display:flex;justify-content:center;align-items:center;margin-top:50px}
-.logo{width:128px;height:128px;background-image:url(/images/window_img.png);background-repeat:no-repeat;background-size:cover;border-radius:24px;margin:0 auto}
-.logo-title{font-size:32px;font-weight:700;margin-top:5px;color:${c.textPrimary}}
-.logo-title img{vertical-align:middle}
-
-.download-container{overflow:hidden;display:flex;justify-content:center}
-.download-group{margin-top:40px;display:flex;justify-content:center;flex-wrap:wrap}
-.tl-main .download-group-item{margin-bottom:70px}
-.download-group-item-img-zone{display:flex;justify-content:center;cursor:pointer;align-items:center}
-.download_item_video_window{position:relative}
-.down_load_img{margin:10px 0}
-.download-group-item-content{display:flex;justify-content:center}
-.download-group-item-content a{color:${c.primary};font-weight:700;text-decoration:none}
-
-.myButton{background-color:${c.primary};border-radius:20px;border:1px solid ${c.btnBorder};display:inline-block;cursor:pointer;color:#fff;font-size:20px;padding:16px 31px;text-decoration:none;text-shadow:0 1px 0 rgba(107,212,253,0.55);transition:background .2s}
-.myButton:hover{background-color:${c.primaryHover}}
-.myButton:active{position:relative;top:1px}
-.myButton img{display:block;width:100%;max-width:350px;height:auto}
-
-.introduce-container{margin-bottom:50px}
-.tl-main .introduce-title{text-align:center;font-weight:700;font-size:20px;margin-bottom:30px;color:${c.textPrimary}}
-.introduce-main{display:flex;justify-content:center}
-.introduce-group{display:flex;flex-wrap:wrap;width:100%;justify-content:space-between;max-width:900px}
-.introduce-group-item{width:27%;margin:20px 0}
-.introduce-group-item-img-zone{display:flex;justify-content:center;align-items:center}
-.introduce-group-item-img{width:160px;height:160px}
-.introduce-group-item-img img{width:100%}
-.introduce-group-item-title{text-align:center;color:${c.featTitle};font-size:20px;margin-top:10px;margin-bottom:5px}
-.introduce-group-item-content{text-align:center;font-size:15px;margin-bottom:20px;color:${c.textSecondary}}
-.introduce-group-item-content img{vertical-align:middle;width:70px;height:19px}
-
-/* ── Articles section (after features, matches lccygs grid) ── */
-.articles{max-width:1100px;margin:0 auto;padding:0 24px 60px}
-.articles h2{text-align:center;font-size:22px;font-weight:700;margin-bottom:36px;color:${c.textPrimary}}
-.art-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.art-card{background:${c.bg};border-radius:12px;overflow:hidden;border:1px solid #e8ecf1;transition:transform .2s,box-shadow .2s;text-decoration:none;color:inherit;display:block}
-.art-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.08)}
-.art-card-body{padding:20px}
-.art-card .art-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin-bottom:10px}
-${tagCSS}
-.art-card h3{font-size:15px;font-weight:700;line-height:1.4;margin-bottom:8px;color:${c.textPrimary};display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.art-card p{font-size:13px;color:${c.textMuted};line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-
-@media(max-width:768px){
-  .tl-main .tl-news-float{display:none}
-  .logo-title{font-size:22px}
-  .download-group{flex-direction:column;align-items:center}
-  .introduce-group-item{width:45%}
-  .art-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:480px){
-  .introduce-group-item{width:100%}
-  .art-grid{grid-template-columns:1fr}
-}
-`;
+const sorted = articles.sort((a, b) => b.data.date.getTime() - a.data.date.getTime()).slice(0, 8);
+const primary = '#0891B2';
+const bgCard = '#f5f7fa';
+const textPrimary = '#1e293b';
 ---
 
 <BaseLayout>
-  <div class="tl-main">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-    <!-- ── 更新浮窗 ── -->
-    <div class="tl-news-float">
-      <div class="news-float-title news-float-time">{siteConfig.newsFloat.date}</div>
-      <div class="news-float-title news-float-lable">{siteConfig.newsFloat.label}</div>
-      {siteConfig.newsFloat.items.map((item, i) => (
-        <div class={`news_${i + 1}`}>{item}</div>
-      ))}
+  <!-- ── Hero ── -->
+  <section class="text-white text-center" style="background:linear-gradient(135deg,#0891B2 0%,#0E7490 40%,#164E63 100%);padding:80px 24px 64px">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">快喵VPN中文教程 — 下载安装使用评测一站式指南</h1>
+    <p class="text-lg md:text-xl opacity-90 max-w-3xl mx-auto mb-6">最全面的快喵VPN中文教程与评测站。涵盖全平台下载安装、使用教程、节点选择、套餐对比、常见问题排查和三方VPN横向对比评测。不吹不黑，用真实数据和体验说话。</p>
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <a href="/download/kuaimiao-install-guide/" class="bg-white text-cyan-700 font-bold px-8 py-3 rounded-full text-lg hover:shadow-xl transition">⬇ 快喵下载教程</a>
+      <a href="/guide/kuaimiao-beginner-guide/" class="bg-green-500 text-white font-bold px-8 py-3 rounded-full text-lg hover:bg-green-600 transition">📖 新手入门</a>
+      <a href="/compare/kuaimiao-vs-surfshark/" class="bg-orange-500 text-white font-bold px-8 py-3 rounded-full text-lg hover:bg-orange-600 transition">📊 VPN对比评测</a>
     </div>
+    <div class="flex flex-wrap justify-center gap-2 text-sm opacity-80">
+      <span class="bg-white/10 px-3 py-1 rounded">🖥 Windows</span>
+      <span class="bg-white/10 px-3 py-1 rounded">🍎 macOS</span>
+      <span class="bg-white/10 px-3 py-1 rounded">📱 Android</span>
+      <span class="bg-white/10 px-3 py-1 rounded">📱 iOS</span>
+      <span class="bg-white/10 px-3 py-1 rounded">🐧 Linux</span>
+    </div>
+  </section>
 
-    <!-- ── Logo 区 ── -->
-    <div class="logo-container">
-      <div class="logo-zone">
-        <div class="logo"></div>
+  <!-- ── 六大特性 ── -->
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center mb-12" style={`color:${textPrimary}`}>六大核心优势，为什么快喵值得选择</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">🌍</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>全球多国节点</h3>
+        <p class="text-sm text-gray-600">覆盖美国、日本、新加坡、香港、英国等十余个国家和地区，一键切换位置，想在哪就在哪。</p>
       </div>
-      <h1 class="logo-title">{siteConfig.logo.text}<br><img src={`/images/${siteConfig.logo.img}`} width={siteConfig.logo.imgWidth} height={siteConfig.logo.imgHeight} alt={siteConfig.logo.text} /></h1>
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">⚡</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>IPLC 专线加速</h3>
+        <p class="text-sm text-gray-600">VIP套餐提供IPLC内网专线节点，更低延迟更稳定，追剧、视频通话、刷社交媒体无压力。</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">🔓</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>不限流量</h3>
+        <p class="text-sm text-gray-600">所有套餐均不限制流量，观看4K视频、下载大文件、在线游戏无需担心超额或降速。</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">📺</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>流媒体解锁</h3>
+        <p class="text-sm text-gray-600">解锁 Netflix、Disney+、YouTube、HBO Max、TikTok 等主流流媒体平台，看遍全球内容。</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">🔒</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>AES-256 加密</h3>
+        <p class="text-sm text-gray-600">军用级加密保护你的上网隐私，公共WiFi下安全上网，防止数据被窃取和追踪。</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border hover:shadow-lg transition">
+        <div class="text-4xl mb-4">✨</div>
+        <h3 class="text-lg font-bold mb-2" style={`color:${primary}`}>一键连接</h3>
+        <p class="text-sm text-gray-600">打开App点击连接即可使用，无需复杂配置。支持免费试用，满意后再付费。中文界面零门槛。</p>
+      </div>
     </div>
+  </section>
 
-    <!-- ── 下载区 ── -->
-    <div class="download-container">
-      <div class="download-group">
-        {siteConfig.downloadButtons.map(btn => (
-          <div class="download-group-item">
-            <div class="download-group-item-img-zone download_item_video_window">
-              <img class="down_load_img" src={`/images/${btn.img}`} loading="lazy" alt="" />
+  <!-- ── 套餐对比 ── -->
+  <section style={`background:${bgCard};padding:64px 24px`}>
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-4" style={`color:${textPrimary}`}>套餐与价格</h2>
+      <p class="text-center text-gray-500 mb-10">快喵提供灵活的套餐选择，总有一款适合你</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-8 border text-center hover:shadow-lg transition">
+          <div class="text-sm text-gray-400 mb-2">免费版</div>
+          <div class="text-4xl font-bold mb-3" style={`color:${primary}`}>¥0<span class="text-lg font-normal text-gray-500">/月</span></div>
+          <ul class="text-sm text-gray-600 space-y-3 mb-6 text-left">
+            <li>✅ 多国免费节点可选</li>
+            <li>✅ 不限流量</li>
+            <li>✅ 无需注册</li>
+            <li>✅ 基础加密保护</li>
+            <li>❌ 无IPLC专线</li>
+            <li>❌ 速度限制</li>
+          </ul>
+          <a href="/download/kuaimiao-install-guide/" class="block border-2 font-bold rounded-full py-3 text-sm no-underline hover:bg-gray-50 transition" style={`border-color:${primary};color:${primary}`}>免费试用</a>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border-2 relative text-center hover:shadow-xl transition scale-105" style={`border-color:${primary}`}>
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full" style={`background:${primary}`}>推荐</span>
+          <div class="text-sm text-gray-400 mb-2 mt-2">VIP月付</div>
+          <div class="text-4xl font-bold mb-3" style={`color:${primary}`}>~¥30<span class="text-lg font-normal text-gray-500">/月</span></div>
+          <ul class="text-sm text-gray-600 space-y-3 mb-6 text-left">
+            <li>✅ 所有免费版功能</li>
+            <li>✅ IPLC专线节点</li>
+            <li>✅ 全速不限速</li>
+            <li>✅ 多设备同时在线</li>
+            <li>✅ 流媒体解锁</li>
+            <li>✅ 优先级客服</li>
+          </ul>
+          <a href="/plans/kuaimiao-vip-detail/" class="block text-white font-bold rounded-full py-3 text-sm no-underline hover:opacity-90 transition" style={`background:${primary}`}>了解VIP详情</a>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border text-center hover:shadow-lg transition">
+          <div class="text-sm text-gray-400 mb-2">VIP年付</div>
+          <div class="text-4xl font-bold mb-3" style={`color:${primary}`}>~¥240<span class="text-lg font-normal text-gray-500">/年</span></div>
+          <ul class="text-sm text-gray-600 space-y-3 mb-6 text-left">
+            <li>✅ VIP全部功能</li>
+            <li>✅ 相当于¥20/月</li>
+            <li>✅ 省33%</li>
+            <li>✅ 专属年付节点</li>
+            <li>✅ 30天退款保证</li>
+          </ul>
+          <a href="/plans/kuaimiao-vip-detail/" class="block border-2 font-bold rounded-full py-3 text-sm no-underline hover:bg-gray-50 transition" style={`border-color:${primary};color:${primary}`}>最省方案</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 横向对比 ── -->
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center mb-4" style={`color:${textPrimary}`}>快喵 vs 主流VPN 横向对比</h2>
+    <p class="text-center text-gray-500 mb-10">用数据说话，不吹不黑</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse bg-white rounded-xl overflow-hidden border">
+        <thead style={`background:${primary};color:#fff`}>
+          <tr><th class="p-4 text-left">对比维度</th><th class="p-4">快喵VPN</th><th class="p-4">Surfshark</th><th class="p-4">NordVPN</th><th class="p-4">ExpressVPN</th></tr>
+        </thead>
+        <tbody>
+          <tr class="border-b"><td class="p-4 font-bold">月费</td><td class="p-4 text-center font-bold text-green-600">~¥30</td><td class="p-4 text-center">~$3.59</td><td class="p-4 text-center text-red-600">~$4.99</td><td class="p-4 text-center text-red-600">~$8.32</td></tr>
+          <tr class="border-b bg-gray-50"><td class="p-4 font-bold">中国可用</td><td class="p-4 text-center font-bold text-green-600">🥇 原生优化</td><td class="p-4 text-center text-yellow-600">🟡 需特殊配置</td><td class="p-4 text-center text-yellow-600">🟡 需特殊配置</td><td class="p-4 text-center text-red-600">🔴 不稳定</td></tr>
+          <tr class="border-b"><td class="p-4 font-bold">中文支持</td><td class="p-4 text-center font-bold text-green-600">✅ 全中文</td><td class="p-4 text-center">✅ 支持</td><td class="p-4 text-center">✅ 支持</td><td class="p-4 text-center">🟡 部分</td></tr>
+          <tr class="border-b bg-gray-50"><td class="p-4 font-bold">节点数</td><td class="p-4 text-center">10+ 国家</td><td class="p-4 text-center font-bold text-green-600">100+ 国家</td><td class="p-4 text-center font-bold text-green-600">60+ 国家</td><td class="p-4 text-center font-bold text-green-600">94+ 国家</td></tr>
+          <tr class="border-b"><td class="p-4 font-bold">独立安全审计</td><td class="p-4 text-center text-red-600">❌ 无</td><td class="p-4 text-center font-bold text-green-600">✅ Cure53</td><td class="p-4 text-center font-bold text-green-600">✅ PwC</td><td class="p-4 text-center font-bold text-green-600">✅ Cure53</td></tr>
+          <tr class="border-b bg-gray-50"><td class="p-4 font-bold">隐私透明度</td><td class="p-4 text-center text-red-600">低</td><td class="p-4 text-center font-bold text-green-600">高</td><td class="p-4 text-center font-bold text-green-600">高</td><td class="p-4 text-center font-bold text-green-600">高</td></tr>
+          <tr class="border-b"><td class="p-4 font-bold">同时连接设备</td><td class="p-4 text-center">5台</td><td class="p-4 text-center font-bold text-green-600">无限</td><td class="p-4 text-center">10台</td><td class="p-4 text-center">8台</td></tr>
+          <tr><td class="p-4 font-bold">退款保证</td><td class="p-4 text-center text-yellow-600">🟡 有限</td><td class="p-4 text-center font-bold text-green-600">30天</td><td class="p-4 text-center font-bold text-green-600">30天</td><td class="p-4 text-center font-bold text-green-600">30天</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-4 text-center">* 数据截至 2026年8月，价格可能变动。客观对比，仅供参考。</p>
+  </section>
+
+  <!-- ── 最新教程 ── -->
+  <section style={`background:${bgCard};padding:64px 24px`}>
+    <div class="max-w-6xl mx-auto">
+      <div class="flex justify-between items-center mb-10">
+        <h2 class="text-3xl font-bold" style={`color:${textPrimary}`}>📝 最新教程</h2>
+        <a href="/articles/" class="text-sm font-semibold no-underline" style={`color:${primary}`}>查看全部 →</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {sorted.map((article) => (
+          <a href={`/${article.id}/`} class="flex gap-4 bg-white rounded-xl p-5 border hover:shadow-md transition no-underline" style="color:inherit">
+            <div class="flex-1">
+              <span class="inline-block text-xs font-bold px-2 py-1 rounded mb-2">{siteConfig.catLabels?.[article.data.category] || article.data.category}</span>
+              <h3 class="font-bold text-base mb-1">{article.data.title}</h3>
+              <p class="text-sm text-gray-500 line-clamp-2">{article.data.description}</p>
             </div>
-            <div class="download-group-item-content">
-              <a href="javascript:void(0)" onclick={btn.onClick}>
-                <div class="myButton">
-                  <img src={`/images/${btn.btnSvg}`} width="350" height="30" alt="下载" />
-                </div>
-              </a>
-            </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>
+  </section>
 
-    <!-- ── Features 区 ── -->
-    <div class="introduce-container width">
-      <h2 class="introduce-title why_tg">
-        <img src="/images/TG2.svg" width="250" height="35" alt="" />
-      </h2>
-      <div class="introduce-main">
-        <div class="introduce-group">
-          {siteConfig.features.map((f, i) => (
-            <div class="introduce-group-item">
-              <div class="introduce-group-item-img-zone">
-                <div class={`introduce-group-item-img introduce-group-item-img-${i + 1}`}>
-                  <img class="img_gif" src={`/images/${f.gif}`} alt={f.title} loading="lazy" style="display:inline" />
-                </div>
-              </div>
-              <div class="introduce-group-item-title introduce_title_{i + 1}">{f.title}</div>
-              <h4 class="introduce-group-item-content">
-                <img src="/images/TT.svg" width="70" height="19" alt="" />
-                <span class={`introduce_${i + 1}`}> {f.desc}</span>
-              </h4>
-            </div>
-          ))}
-        </div>
-      </div>
+  <!-- ── FAQ ── -->
+  <section class="max-w-3xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center mb-12" style={`color:${textPrimary}`}>常见问题</h2>
+    <div class="space-y-3">
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵VPN 怎么下载安装？</summary><p class="mt-3 text-gray-600 text-sm">访问快喵官网，选择对应操作系统（Windows/Mac/Android/iOS），下载安装包后按提示安装即可。iOS 用户需使用非中国区 Apple ID 从 App Store 下载。</p></details>
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵VPN 安全吗？会不会泄露隐私？</summary><p class="mt-3 text-gray-600 text-sm">快喵采用 AES-256 加密保护数据传输。但需注意：快喵是中资VPN，隐私透明度低于独立安全审计的国际VPN。建议只用于日常上网和流媒体，不用于高度敏感场景。</p></details>
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵连不上/速度慢怎么办？</summary><p class="mt-3 text-gray-600 text-sm">先切换节点（优选日本、新加坡节点延迟最低），再检查网络环境。VIP 用户可切到 IPLC 专线节点。如果仍无效，尝试更换协议或联系客服。</p></details>
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵免费版够用吗？</summary><p class="mt-3 text-gray-600 text-sm">免费版提供多国节点、不限流量，日常看视频、刷社交媒体基本够用。VIP 提供 IPLC 专线、更低延迟，适合追4K视频或视频通话用户。</p></details>
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵能解锁 Netflix 吗？</summary><p class="mt-3 text-gray-600 text-sm">可以。快喵支持解锁 Netflix、Disney+、YouTube、HBO Max、TikTok 等主流平台。建议连接美国或日本节点，VIP 套餐解锁成功率更高。</p></details>
+      <details class="bg-white rounded-xl p-5 border"><summary class="font-bold cursor-pointer">快喵和 Surfshark/NordVPN 哪个好？</summary><p class="mt-3 text-gray-600 text-sm">快喵优势：中国用户优化、中文友好、一键连接、价格低。Surfshark/NordVPN：无日志、独立审计、功能更多，但价格更高、在中国需特殊配置。选择取决于你的需求。</p></details>
     </div>
+  </section>
 
-    <!-- ── 最新文章区 ── -->
-    <section class="articles">
-      <h2>最新教程</h2>
-      <div class="art-grid">
-        {sorted.map(article => {
-          const cat = article.data.category || 'guide';
-          return (
-            <a href={`/${article.id}/`} class="art-card">
-              <div class="art-card-body">
-                <span class={`art-tag ${cat}`}>{siteConfig.catLabels?.[cat] || article.data.category}</span>
-                <h3>{article.data.title}</h3>
-                <p>{article.data.description}</p>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-      <div style="text-align:center;margin-top:32px">
-        <a href="/articles/" style={`display:inline-block;padding:12px 36px;background:${c.primary};color:#fff;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s`}>查看全部教程 →</a>
-      </div>
-    </section>
+  <!-- ── 底部CTA ── -->
+  <section class="text-center text-white" style="background:linear-gradient(135deg,#0E7490,#0891B2);padding:64px 24px">
+    <h2 class="text-3xl font-bold mb-4">马上体验快喵VPN</h2>
+    <p class="text-lg opacity-80 mb-8 max-w-xl mx-auto">免费下载试用，不满意随时换。你的网络自由，从快喵开始。</p>
+    <a href="/download/kuaimiao-install-guide/" class="inline-block bg-white text-cyan-700 font-bold px-10 py-4 rounded-full text-lg hover:shadow-2xl transition">⬇ 免费下载安装</a>
+  </section>
 
-    <!-- ── 常见问题 FAQ ── -->
-    <section class="articles" style="padding-bottom:0">
-      <h2>常见问题</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-q">快喵VPN 怎么下载安装？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">访问快喵官网 acekuaimiao.com，选择对应操作系统（Windows/Mac/Android/iOS），下载安装包后按提示安装即可。iOS 用户需使用非中国区 Apple ID 从 App Store 下载。详见 <a href="/download/kuaimiao-install-guide/">快喵全平台下载安装教程</a>。</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">快喵VPN 安全吗？会不会泄露隐私？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">快喵采用 AES-256 加密和自研协议保护数据传输安全。但需注意：快喵是中资 VPN，隐私透明度低于 NordVPN/Surfshark 等无日志 VPN。建议只用于日常上网和流媒体访问，不用于高度敏感场景。详见 <a href="/compare/kuaimiao-safety-review/">快喵VPN 安全性深度评测</a>。</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">快喵连不上/速度慢怎么办？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">先尝试切换节点（优选日本、新加坡节点延迟最低），再检查网络环境（关闭其他VPN/防火墙）。如果仍无效，可尝试更换协议或联系客服。VIP 用户可切到 IPLC 专线节点。详见 <a href="/fix/kuaimiao-not-working/">快喵连不上终极排查指南</a>。</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">快喵免费版够用吗？需要买VIP吗？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">免费版提供多国节点可选、不限流量，日常看视频、刷社交媒体基本够用。VIP 提供 IPLC 专线、更低延迟、更稳定连接，适合需要追 4K 视频、视频通话或用作生产力的用户。详见 <a href="/plans/kuaimiao-free-vs-vip/">快喵免费版 vs VIP 套餐完整对比</a>。</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">快喵和 Surfshark/NordVPN 哪个好？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">快喵优势：中国用户优化、中文支持好、一键连接、价格低。劣势：隐私透明度低、无第三方安全审计。Surfshark/NordVPN：无日志、独立审计、功能更多，但价格更高、在中国需要特殊配置。详见 <a href="/compare/kuaimiao-vs-surfshark/">快喵 vs Surfshark vs NordVPN 三方对比</a>。</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">快喵能解锁 Netflix 吗？ <span class="faq-arrow">▼</span></div>
-          <div class="faq-a"><div class="faq-a-inner">可以。快喵支持解锁 Netflix、Disney+、YouTube、HBO Max、TikTok 等主流流媒体平台。建议连接美国或日本节点，VIP 套餐 IPLC 专线解锁成功率更高。详见 <a href="/guide/kuaimiao-netflix-unlock/">快喵流媒体解锁完整指南</a>。</div></div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <style set:html={pageCSS} />
+  <style>
+    .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    details summary { list-style:none; }
+    details summary::-webkit-details-marker { display:none; }
+    details[open] summary { color:#0891B2; }
+  </style>
 </BaseLayout>
